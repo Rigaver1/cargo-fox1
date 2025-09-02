@@ -1,17 +1,23 @@
 import sqlite3
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Загружаем переменные окружения
+load_dotenv()
 
 def get_db():
     """
     Создает и возвращает подключение к базе данных.
     База данных ищется в папке database проекта.
     """
-    # Получаем путь к текущей папке (где находится этот файл)
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Собираем путь к файлу базы данных
-    db_path = os.path.join(current_dir, 'cargo_manager.db')
+    # Путь к файлу базы данных из переменной окружения
+    db_path = os.getenv('DATABASE_PATH')
+
+    # Если переменная не задана, используем путь по умолчанию рядом с этим файлом
+    if not db_path:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(current_dir, 'cargo_manager.db')
     
     # Проверяем, существует ли файл базы данных
     if not os.path.exists(db_path):

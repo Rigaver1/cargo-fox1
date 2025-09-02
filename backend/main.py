@@ -1,5 +1,6 @@
 import sys
 import os
+from dotenv import load_dotenv
 
 # Добавляем путь к проекту в sys.path для корректной работы импортов
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -8,6 +9,9 @@ if project_root not in sys.path:
 
 from flask import Flask, jsonify
 from flask_cors import CORS
+
+# Загружаем переменные окружения
+load_dotenv()
 
 # Импортируем компоненты приложения
 try:
@@ -65,14 +69,18 @@ def create_app():
 if __name__ == '__main__':
     # Создаем приложение
     app = create_app()
-    
+
+    # Читаем параметры запуска из переменных окружения
+    host = os.getenv('HOST', 'localhost')
+    port = int(os.getenv('PORT', '5000'))
+
     # Запускаем сервер
     print("Запуск Cargo Manager Лисёнок API сервера...")
-    print("Сервер доступен по адресу: http://localhost:5000")
-    print("Документация API: http://localhost:5000/api/health")
-    
+    print(f"Сервер доступен по адресу: http://{host}:{port}")
+    print(f"Документация API: http://{host}:{port}/api/health")
+
     app.run(
-        host='localhost',
-        port=5000,
+        host=host,
+        port=port,
         debug=True
     )
