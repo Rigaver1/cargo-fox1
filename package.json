@@ -1,0 +1,7 @@
+﻿{
+    "devDependencies":  {
+                            "@babel/plugin-transform-react-jsx":  "^7.27.1",
+                            "eslint":  "^8.57.1",
+                            "eslint-plugin-react-hooks":  "^4.6.2"
+                        }
+}
