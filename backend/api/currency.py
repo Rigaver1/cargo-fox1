@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
 
 from backend.services.currency_service import get_rates, update_rates_now, convert_amounts
 
@@ -7,18 +8,21 @@ currency_bp = Blueprint('currency', __name__)
 
 
 @currency_bp.route('/api/currency/rates', methods=['GET'])
+@jwt_required()
 def rates():
     rates, last_update = get_rates()
     return jsonify({'rates': rates, 'last_update': last_update}), 200
 
 
 @currency_bp.route('/api/currency/update-now', methods=['POST'])
+@jwt_required()
 def update_now():
     rates, last_update = update_rates_now()
     return jsonify({'status': 'success', 'rates': rates, 'last_update': last_update}), 200
 
 
 @currency_bp.route('/api/currency/conversions', methods=['GET'])
+@jwt_required()
 def conversions():
     amount = request.args.get('amount', type=float)
     from_code = request.args.get('from', default='CNY', type=str)

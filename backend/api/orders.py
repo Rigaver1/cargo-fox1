@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
 import sys
 import os
 
@@ -14,6 +15,7 @@ from backend.services import order_service
 orders_bp = Blueprint('orders', __name__)
 
 @orders_bp.route('/api/orders', methods=['GET'])
+@jwt_required()
 def get_orders():
     """
     Получает список всех заявок.
@@ -29,6 +31,7 @@ def get_orders():
         return jsonify({'error': f'Ошибка при получении заявок: {str(e)}'}), 500
 
 @orders_bp.route('/api/orders/<order_id>', methods=['GET'])
+@jwt_required()
 def get_order(order_id):
     """
     Получает заявку по её идентификатору.
@@ -49,6 +52,7 @@ def get_order(order_id):
         return jsonify({'error': f'Ошибка при получении заявки: {str(e)}'}), 500
 
 @orders_bp.route('/api/orders', methods=['POST'])
+@jwt_required()
 def create_order():
     """
     Создает новую заявку.
@@ -87,6 +91,7 @@ def create_order():
         return jsonify({'error': f'Ошибка при создании заявки: {str(e)}'}), 500
 
 @orders_bp.route('/api/orders/<order_id>', methods=['PUT'])
+@jwt_required()
 def update_order(order_id):
     """
     Обновляет существующую заявку.
@@ -125,6 +130,7 @@ def update_order(order_id):
         return jsonify({'error': f'Ошибка при обновлении заявки: {str(e)}'}), 500
 
 @orders_bp.route('/api/orders/<order_id>', methods=['DELETE'])
+@jwt_required()
 def delete_order(order_id):
     """
     Удаляет заявку по её идентификатору.

@@ -6,8 +6,9 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, create_access_token
 
 # Импортируем компоненты приложения
 try:
@@ -28,9 +29,14 @@ def create_app():
     """
     # Создаем экземпляр Flask
     app = Flask(__name__)
-    
-    # Настройка CORS для всех маршрутов
-    CORS(app)
+
+    # Настройка CORS с ограничением по доменам
+    allowed_origins = ["http://localhost:3000"]
+    CORS(app, origins=allowed_origins)
+
+    # Настройка JWT
+    app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret-key')
+    JWTManager(app)
     
     # Проверяем подключение к базе данных
     try:
@@ -45,6 +51,16 @@ def create_app():
     # (префикс уже указан в самом orders.py)
     app.register_blueprint(orders_bp)
     app.register_blueprint(currency_bp)
+
+    # Маршрут для получения токена доступа
+    @app.route('/api/login', methods=['POST'])
+    def login():
+        data = request.get_json() or {}
+        username = data.get('username')
+        if not username:
+            return jsonify({'msg': 'Missing username'}), 400
+        access_token = create_access_token(identity=username)
+        return jsonify({'access_token': access_token}), 200
     
     # Добавляем маршрут для проверки работоспособности
     @app.route('/api/health', methods=['GET'])
